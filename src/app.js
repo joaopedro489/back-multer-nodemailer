@@ -17,5 +17,5 @@ app.use(router);
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+  console.log(`${process.env.APP_NAME} app listening at http://localhost:${port}`);
 });

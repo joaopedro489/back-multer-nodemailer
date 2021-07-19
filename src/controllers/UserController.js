@@ -1,29 +1,29 @@
 const User = require('../models/User');
-const mailer = require('../config/mail');
-const hbs = require('nodemailer-express-handlebars');
+const mailer = require('../config/mail').mailer;
+const readHtml = require("../config/mail").readHTMLFile;
 const path = require('path');
+const hbs = require("handlebars");
 
 const create = async(req, res) => {
 	try {
-		const pathTemplate = path.resolve(__dirname, '..', '..', 'templates/');
+		const pathTemplate = path.resolve(__dirname, '..', '..', 'templates');
 		console.log(pathTemplate);
 		const user = await User.create(req.body);
-		mailer.use('compile', hbs({
-			viewEngine:	{
-				extName: ".handlebars",
-      			partialsDir: pathTemplate,
-      			defaultLayout: false
-    		},
-			viewPath: pathTemplate,
-			extName: ".handlebars"
-		}));
-		const message = {
-			to: user.email,
-			subject: "Apenas um teste",
-			template: "main"
-		}
-		mailer.sendMail(message, (err) => {
-			console.log(err + "!");
+		readHtml(path.join(pathTemplate, "main.html"), (err,html)=>{
+			const template = hbs.compile(html);
+			const replacements = {
+				username: user.username
+			};
+			const htmlToSend = template(replacements);
+			const message = {
+				from: "testeaula424@gmail.com",
+				to: user.email,
+				subject: "Apenas um teste",
+				html: htmlToSend
+			}
+			mailer.sendMail(message, (err) => {
+				console.log(err + "!");
+			});
 		});
 		return res.status(201).json({user});
 	} catch (err) {

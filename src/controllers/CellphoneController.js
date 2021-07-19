@@ -62,8 +62,8 @@ const addPhotoCellphone = async(req, res) => {
 			});
 			await cellphone.addPhoto(photo);
 		}
-		const cellphoneUpdated = await Cellphone.findByPk(id, {include:{model: Photo}});
-		return res.status(200).json(cellphoneUpdated);
+		await cellphone.reload();
+		return res.status(200).json(cellphone);
 	} catch (e) {
 		return res.status(500).json(e + "!");
 	}

@@ -10,7 +10,7 @@ const upload = multer({ storage: storage,
 	fileFilter: function (req, file, cb) {
 	        const ext = path.extname(file.originalname);
 	        if(ext !== '.png' && ext !== '.jpg' && ext !== '.gif' && ext !== '.jpeg') {
-	            return cb(new Error('Something went wrong'), false);
+	            return cb(new Error('Erro extensão não suportada!'), false);
 	        }
 	        cb(null, true);
 	    },
@@ -20,9 +20,8 @@ const upload = multer({ storage: storage,
 
  });
 
-router.get('/cellphones/photos/:id', upload.single('photo'), CellphoneController.addPhotoCellphone)
-
 const allUploads = upload.fields([{ name: 'photo', maxCount: 4 }]);
+router.post('/cellphones/files/:id', allUploads, CellphoneController.addFilesCellphone);
 
 router.post('/cellphones/photo/:id', upload.single('photo'), CellphoneController.addPhotoCellphone);
 router.delete('/photo/:id', CellphoneController.removePhoto);
@@ -33,6 +32,6 @@ router.post('/cellphones', CellphoneController.create);
 router.put('/cellphones', CellphoneController.update);
 router.delete('/cellphones/:id', CellphoneController.destroy);
 
-router.post('/user/', UserController.create);
+router.post('/user', UserController.create);
 
 module.exports = router;
